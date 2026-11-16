@@ -49,6 +49,38 @@ The local embedding model (`mxbai-embed-large`) has a 512-token context — abou
 (default 512) adapt the budget to another model; re-run
 `src/patches/patch-swarm-plugin.py` after changing them.
 
+## Sync between two Macs
+
+Memories are the only thing worth merging: cells, reservations and events are
+machine-local coordination state and must not be shared.
+
+Do **not** sync `swarm.db` (WAL + vector index + concurrent writers). Instead,
+each machine exports a JSONL snapshot without vectors, and imports the others:
+
+```
+~/SwarmSync/
+  macbook-pro.jsonl     ← written only by the MacBook
+  mac-studio.jsonl      ← written only by the Studio
+```
+
+- `swarmaxe-memory-export.ts` writes `<hostname>.jsonl` (all local memories,
+  content and metadata, no embeddings) atomically.
+- `swarmaxe-memory-import.ts` reads the other files, skips ids already present
+  and contents with the same SHA-256, inserts the rest with `embedding NULL`.
+- `swarmaxe-reembed.ts --null-only` vectorises the imports locally (vectors are
+  model-specific, so they are never transferred).
+- `swarmaxe-memory-sync.sh` chains the three; the `ai.swarmaxe.sync` launchd job
+  runs it twice a day (09:20 and 21:20).
+
+Because each host writes only its own file, both machines can run the job at
+the same time without clobbering each other. Put `~/SwarmSync` in iCloud Drive,
+Google Drive or Syncthing; on a shared Wi-Fi, Syncthing or an rsync/SSH pull is
+more deterministic than cloud sync.
+
+First transfer between two machines can be done with AirDrop: copy the bundle
+(`swarmaxe-airdrop-*.zip`), run `install.sh`, then drop the exported
+`<hostname>.jsonl` into the same sync folder on the other Mac.
+
 ## Restore on another machine
 
 The knowledge bundle contains `memories.jsonl`, `cells.jsonl` and (optionally)

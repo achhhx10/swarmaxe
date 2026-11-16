@@ -31,7 +31,7 @@ else
 fi
 
 echo "== compilation =="
-for f in src/adapter/swarmaxe.ts src/adapter/legacy.ts src/lib/skill-forge.ts src/lib/memory.ts scripts/adapter-selftest.ts scripts/memory-selftest.ts tests/memory-test.ts; do
+for f in src/adapter/swarmaxe.ts src/adapter/legacy.ts src/lib/skill-forge.ts src/lib/memory.ts scripts/adapter-selftest.ts scripts/memory-selftest.ts scripts/swarmaxe-reembed.ts scripts/swarmaxe-memory-export.ts scripts/swarmaxe-memory-import.ts tests/memory-test.ts; do
   if bun build --no-bundle --target=node "$f" >/tmp/swarmaxe-verify.js 2>/dev/null && node --check /tmp/swarmaxe-verify.js 2>/dev/null; then
     ok "node --check $f"
   else

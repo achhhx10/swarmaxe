@@ -56,7 +56,8 @@ run "cp '$HERE/src/adapter/legacy.ts' '$OC/swarmaxe-v1/legacy.ts'"
 run "cp '$HERE/src/lib/skill-forge.ts' '$PATCHES/skill-forge.ts'"
 run "cp '$HERE/src/lib/memory.ts' '$OC/lib/memory.ts'"
 for f in swarmaxe-doctor.sh swarmaxe-agents.sh swarmaxe-watchdog.sh swarmaxe-backup.sh swarmaxe-index-daily.sh \
-         index-sessions.py coverage-audit.py adapter-selftest.ts memory-selftest.ts swarmaxe-reembed.ts; do
+         swarmaxe-memory-sync.sh index-sessions.py coverage-audit.py adapter-selftest.ts memory-selftest.ts \
+         swarmaxe-reembed.ts swarmaxe-memory-export.ts swarmaxe-memory-import.ts; do
   run "cp '$HERE/scripts/$f' '$PATCHES/$f'"
   run "chmod 755 '$PATCHES/$f'"
 done
@@ -85,7 +86,7 @@ run "python3 '$HERE/src/patches/patch-swarm-indexer.py'"
 if [ "$NO_LAUNCHD" -eq 0 ]; then
   if [ "$(uname -s)" = "Darwin" ]; then
     say "jobs launchd"
-    for job in watchdog backup indexer; do
+    for job in watchdog backup indexer sync; do
       src="$HERE/launchd/ai.swarmaxe.$job.plist"
       dst="$HOME/Library/LaunchAgents/ai.swarmaxe.$job.plist"
       run "sed 's|__HOME__|$HOME|g; s|__PATCHES__|$PATCHES|g' '$src' > '$dst'"

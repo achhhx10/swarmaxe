@@ -1,5 +1,18 @@
 # Changelog
 
+## 0.1.2 — 2026-11-16
+
+Two-machine memory sync.
+
+- `swarmaxe-memory-export.ts` writes one JSONL snapshot per machine
+  (`<hostname>.jsonl`, content and metadata, no vectors) so two Macs never
+  overwrite each other.
+- `swarmaxe-memory-import.ts` merges the other machines' files, skipping known
+  ids and identical contents (SHA-256), and stores the rest as pending.
+- `swarmaxe-memory-sync.sh` chains export → import → `reembed --null-only`;
+  the `ai.swarmaxe.sync` launchd job runs it twice a day.
+- Doctor reports the sync folder and job state.
+
 ## 0.1.1 — 2026-11-16
 
 Memory retention fix.

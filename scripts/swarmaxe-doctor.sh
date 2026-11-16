@@ -120,6 +120,16 @@ else
   note "indexeur pas encore passe (normal au premier lancement)"
 fi
 
+echo "== 3c. synchronisation memoire =="
+SYNCDIR="${SWARM_SYNC_DIR:-$HOME/SwarmSync}"
+if [ -d "$SYNCDIR" ]; then
+  n=$(ls "$SYNCDIR"/*.jsonl 2>/dev/null | wc -l | tr -d ' ')
+  if [ "${n:-0}" -gt 0 ]; then ok "sync: ${n} export(s) JSONL dans $SYNCDIR"; else note "sync: dossier present, aucun export"; fi
+  if launchctl print "gui/$(id -u)/ai.swarmaxe.sync" >/dev/null 2>&1; then ok "sync: job launchd installe"; else note "sync: job launchd absent (lancer swarmaxe-memory-sync.sh)"; fi
+else
+  note "sync: $SYNCDIR absent (optionnel)"
+fi
+
 echo "== 4. ollama / embeddings =="
 ollama_ok=0
 for _try in 1 2 3; do
