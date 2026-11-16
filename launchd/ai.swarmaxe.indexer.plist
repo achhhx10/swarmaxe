@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+  <key>Label</key>
+  <string>ai.swarmaxe.indexer</string>
+  <key>ProgramArguments</key>
+  <array><string>/bin/bash</string><string>__PATCHES__/swarmaxe-index-daily.sh</string></array>
+  <key>StartCalendarInterval</key>
+  <array>
+    <dict><key>Hour</key><integer>4</integer><key>Minute</key><integer>15</integer></dict>
+    <dict><key>Hour</key><integer>13</integer><key>Minute</key><integer>15</integer></dict>
+  </array>
+  <key>StandardOutPath</key>
+  <string>__HOME__/.config/swarm-tools/logs/indexer.launchd.log</string>
+  <key>StandardErrorPath</key>
+  <string>__HOME__/.config/swarm-tools/logs/indexer.launchd.log</string>
+</dict>
+</plist>
